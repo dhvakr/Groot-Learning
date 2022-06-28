@@ -1,0 +1,30 @@
+version: '3'
+services:
+  mysql-instance:
+    container_name: "mysql-instance"
+    image: mysql:8
+    platform: linux/amd64
+    restart: always
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_DATABASE=csv_upload
+      - MYSQL_PASSWORD=grootan73
+      - MYSQL_ROOT_PASSWORD=grootan73
+    ports:
+      - "3307:3307"
+    expose:
+      - "3306"
+  excelUpload-container:
+    container_name: "ExcelUpload-Container"
+    image: exceluploadservice
+    ports:
+      - "4500:4500"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-instance:3306/csv_upload?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: "root"
+      SPRING_DATASOURCE_PASSWORD: "grootan73"
+    build:
+      context: "./"
+      dockerfile: "Dockerfile"
+    depends_on:
+      - mysql-instance
